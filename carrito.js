@@ -10,7 +10,8 @@ const remerasCustom = [
         nombre: "MOTORCYCLE ",
         talle: "S  M  L  XL",
         precio: 12500,
-        img: "./remeras/motorcycle-back.jpg"
+        img: "./remeras/motorcycle-back.jpg",
+        cantidad: 1
     },
 
     {
@@ -18,7 +19,8 @@ const remerasCustom = [
         nombre: "OILY",
         talle: "S  M  L  XL",
         precio: 11500,
-        img: "./remeras/OILY.jpg"
+        img: "./remeras/OILY.jpg",
+        cantidad: 1
     },
 
     {
@@ -27,6 +29,7 @@ const remerasCustom = [
         talle: "S  M  L  XL",
         precio: 13500,
         img: "./remeras/OR COMPANY.jpg",
+        cantidad: 1
     },
 
     {
@@ -35,6 +38,7 @@ const remerasCustom = [
         talle: "S  M  L  XL",
         precio: 12800,
         img: "./remeras/shapper-nar.jpg",
+        cantidad: 1
     },
 ]
 
@@ -50,7 +54,7 @@ const bagContainer = document.getElementById("bagContainer");
 
 // EN ESTE ARRAY VACIO SE AGREGAN LOS PRODUCTOS QUE SE VAYAN COMPRANDO
 
-let carritoCustom = []
+let carritoCustom = JSON.parse(localStorage.getItem("bagCustom")) || [];
 
 // RECORRO EL ARRAY Y AGREGO LOS ELEMENTOS dentro del  DIV
 
@@ -64,7 +68,7 @@ remerasCustom.forEach(remeras => {
     <h2 class="precio">${remeras.precio} $</h2>
     `;
 
-    //AGREGO LA ESTRUCTURA HTMAL AL CONTENEDOR shopContainer
+    //AGREGO LA ESTRUCTURA HTML AL CONTENEDOR shopContainer
 
     shopContainer.append(contenedor);
 
@@ -76,31 +80,51 @@ remerasCustom.forEach(remeras => {
     comprar.innerText = "comprar";
 
     contenedor.append(comprar);
-//el boton comprar permite agregar a la bolsa las remeras
+
+    //el boton comprar permite agregar a la bolsa las remeras
 
     comprar.addEventListener("click", () => {
-        carritoCustom.push({
-            id: remeras.id,
-            nombre: remeras.nombre,
-            img: remeras.img,
-            talle: remeras.talle,
-            precio: remeras.precio
-        })
 
-        //esto es para ver si funciona
-        console.log(carritoCustom)
-    })
+        const repetida = carritoCustom.some((remeraRepetida) => remeraRepetida.id === remeras.id);
+
+        console.log(repetida);
+
+        if (repetida) {
+            carritoCustom.map((rem) => {
+                if (rem.id === remeras.id) {
+                    rem.cantidad++;
+                }
+            });
+        } else {
+            carritoCustom.push({
+                id: remeras.id,
+                nombre: remeras.nombre,
+                img: remeras.img,
+                talle: remeras.talle,
+                cantidad: remeras.cantidad,
+                precio: remeras.precio,
+            });
+            //AGREGO LOS ELEMENTOS AL LOCAL STORAGE
+            bagLocal();
+        }
+
+        Swal.fire(
+            'buenismo!',
+            'tu producot esta en el carrito!',
+            'success'
+        )
+    });
 });
 
 
-// la funcion flecha crea las estructura me permite crear  un div con un titulo y un boton que oculta 
+// la funcion flecha crea las estructura con un div con un titulo y un boton que oculta 
 //el contenedor, ademas recorre el carrito q contiene los productos selecionados y calcula el precio total.
 
 const carritoBolsa = () => {
-//cada vez q se haga click en el icono bolsita se limpia el contenedor
+    //cada vez q se haga click en el icono bolsita se limpia el contenedor
     bagContainer.innerHTML = ""
-//muestro el icono bolsita
-    bagContainer.style.display = "flex";
+    //muestro el icono bolsita
+    bagContainer.style.display = "grid";
 
     const bagHeader = document.createElement("div");
     bagHeader.className = "bag-header";
@@ -123,22 +147,26 @@ const carritoBolsa = () => {
         bagCarrito.className = "bag-carrito";
         bagCarrito.innerHTML = `
     <img class = "bag-img" src="${remeras.img}">
-    <h3>${remeras.nombre}<h3>
-    <p>${remeras.talle}</p>
-    <h2>${remeras.precio}$</h2>
+    <h3>Remera :${remeras.nombre}<h3>
+    <p>Talle: ${remeras.talle}</p>
+    <p>cantidad: ${remeras.cantidad}</p> 
+    <h2>Precio: ${remeras.precio}$</h2>
+    <p>subtotal: ${remeras.cantidad * remeras.precio}</p>
+    <spam class ="bag-eliminar"> ❌</spam>
+   
     `;
         bagContainer.append(bagCarrito);
+        //ME DICE CUANATOS ELEMENTOS TIENE MI ARRAY CARRITOCUSTOM
+        console.log(carritoCustom.length);
 
-        let bagEliminar = document.createElement("spam");
-        bagEliminar.innerText = "❌";
-        bagEliminar.className = "bag-eliminar";
+        let eliminar = bagCarrito.querySelector(".bag-eliminar");
 
-        bagContainer.append(bagEliminar)
-
-        bagEliminar.addEventListener("click", eliminarRemera);
+        eliminar.addEventListener("click", () => {
+            eliminarRemera(remeras.id);
+        })
     });
 
-    const Total = carritoCustom.reduce((acc, rem) => acc + rem.precio, 0);
+    const Total = carritoCustom.reduce((acc, rem) => acc + rem.precio * rem.cantidad, 0);
 
     const bagTotal = document.createElement("div")
     bagTotal.className = "bag-total";
@@ -148,19 +176,34 @@ const carritoBolsa = () => {
 }
 //funcion flecha para eliminar los productos cuando se hace click en el icono "❌"
 
-const eliminarRemera = () => {
+const eliminarRemera = (id) => {
 
-    const buscarId = carritoCustom.find((elremera) => elremera.id);
+    const buscarId = carritoCustom.find((elremera) => elremera.id === id);
 
     carritoCustom = carritoCustom.filter((carritoId) => {
         return carritoId !== buscarId;
     });
 
     carritoBolsa();
+    bagLocal();
 }
 
-//al hacer click en el icono bolsita muetra el contenmido de dle carrito
+//al hacer click en el icono bolsita muestra el contenido del carrito
 bagCustom.addEventListener("click", carritoBolsa)
 
 
+//LOCAL STORAGE SET
 
+const bagLocal = () => {
+    localStorage.setItem("bagCustom", JSON.stringify(carritoCustom));
+};
+
+
+
+//LOGIN
+
+sesion.addEventListener("click", () => { 
+    if (document.getElementById("username").value == "usuario") {
+document.getElementById("mensaje").innerHTML=` <h2">acceso correcto <h2>`;
+    }
+})
