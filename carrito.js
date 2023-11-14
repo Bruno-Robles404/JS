@@ -229,7 +229,7 @@ footerGrupouno.innerHTML = `
     <div class="box">
         <figure>
             <a href="#">
-                <img src="/imagenes/logo.png" alt="logo de la empresa">
+                <img src="./imagenes/logo.png" alt="logo de la empresa">
             </a>
         </figure>
     </div>
