@@ -1,0 +1,37 @@
+[
+    {
+        "id": "001",
+        "nombre": "MOTORCYCLE ",
+        "talle": "S  M  L  XL",
+        "precio": 12500,
+        "img": "./remeras/motorcycle-back.jpg",
+        "cantidad": 1
+    },
+
+    {
+        "id": "002",
+        "nombr": "OILY",
+        "talle": "S  M  L  XL",
+        "precio": 11500,
+        "img": "./remeras/OILY.jpg",
+        "cantidad": 1
+    },
+
+    {
+        "id": "003",
+        "nombre": "OR COMPANY",
+        "talle": "S  M  L  XL",
+        "precio": 13500,
+        "img": "./remeras/OR COMPANY.jpg",
+        "cantidad": 1
+    },
+
+    {
+        "id": "004",
+        "nombre": "SHAPPER NAR",
+        "talle": "S  M  L  XL",
+        "precio": 12800,
+        "img": "./remeras/shapper-nar.jpg",
+        "cantidad": 1
+    }
+]
