@@ -10,7 +10,7 @@
 
     {
         "id": "002",
-        "nombr": "OILY",
+        "nombre": "OILY",
         "talle": "S  M  L  XL",
         "precio": 11500,
         "img": "./remeras/OILY.jpg",
